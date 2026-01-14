@@ -7,6 +7,12 @@ class Skeleton_generator():
         self.mp_pose = mp.solutions.pose
         self.pose = self.mp_pose.Pose(static_image_mode=static_image_mode) # True - for photo (best quality), False - for video
 
+    def normalize(self, df, col_name, new_col_name):
+        min_val = df[col_name].min()
+        max_val = df[col_name].max()
+        df[new_col_name] = (df[col_name] - min_val) / (max_val - min_val)
+        return df
+
     def generate(self, image):
         # konwersja BGR -> RGB
         image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -20,10 +26,26 @@ class Skeleton_generator():
         h, w, _ = image.shape
         data = []
         for id, lm in enumerate(results.pose_landmarks.landmark):
-            x_px, y_px = int(lm.x * w), int(lm.y * h)
-            data.append([id, lm.x, lm.y, lm.z, lm.visibility, x_px, y_px])
+            x_px, y_px, z_px = int(lm.x * w), int(lm.y * h),  int(lm.z * h)
+            data.append([id, x_px, y_px, z_px, lm.visibility])
 
-        df = pd.DataFrame(data, columns=["id", "x", "y", "z", "visibility", "x_px", "y_px"])
+        df = pd.DataFrame(data, columns=["id", "x_px", "y_px", "z_px", "visibility"])
+
+        min_x = df["x_px"].min()
+        min_y = df["y_px"].min()
+        min_z = df["z_px"].min()
+
+        df["x_px"] = df["x_px"] - min_x
+        df["y_px"] = df["y_px"] - min_y
+        df["z_px"] = df["z_px"] - min_z
+
+        df = self.normalize(df, "x_px", "x")
+        df = self.normalize(df, "y_px", "y")
+        df = self.normalize(df, "z_px", "z")
+
+
+        important_points = [8, 7, 20,  16, 14, 12, 11, 13, 15, 19, 24, 23, 26, 25, 26, 28, 32 ,27, 31]
+        df = df.iloc[important_points]
 
         # Draws skeleton
         self.mp_drawing.draw_landmarks(image, results.pose_landmarks, self.mp_pose.POSE_CONNECTIONS)

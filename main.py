@@ -28,7 +28,8 @@ def runPhotoProcessing(pictures_location, data_outcome_folder):
         cv2.imshow("Processing (any key to skip)", image)
 
         df_skeleton.to_csv(os.path.join(data_outcome_folder, picture_name.split(".")[0] + ".csv"))
-        cv2.waitKey(3000)
+
+        # cv2.waitKey(3000)
 
 if __name__ == '__main__':
     print("1. Uruchom rozpoznawanie intencji")

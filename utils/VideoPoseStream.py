@@ -1,5 +1,6 @@
 import cv2
 import time
+from utils.skeleton_vectors import skeleton_to_feature_vector
 
 
 class VideoPoseStream:
@@ -9,7 +10,6 @@ class VideoPoseStream:
 
         self.cap = cv2.VideoCapture(0)
 
-        # Zmienne potrzebne do wyświetlania FPS
         self.fps = 0
         self.frame_count = 0
         self.start_time = time.time()
@@ -39,7 +39,7 @@ class VideoPoseStream:
             (10, 30),
             cv2.FONT_HERSHEY_SIMPLEX,
             1,
-            (0, 255, 0),  # Kolor zielony
+            (0, 255, 0),
             2,
             cv2.LINE_AA
         )
@@ -61,6 +61,8 @@ class VideoPoseStream:
 
             frame = self.add_fps_text(frame)
             df_skeleton = self.generate_skeleton(frame)
+            # features = skeleton_to_feature_vector(df_skeleton)
+            # print("Features:", features)
             category = self.categorize_skeleton(df_skeleton)
 
             cv2.putText(
