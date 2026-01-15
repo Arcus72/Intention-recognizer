@@ -4,6 +4,7 @@ from utils.VideoPoseStream import VideoPoseStream
 from utils.Skeleton_generator import Skeleton_generator
 from utils.recognize_intention import recognize_intention
 from utils.image_process_fn import resize_image_to_width
+from utils.train_models import train_models
 import cv2
 import os
 
@@ -43,4 +44,5 @@ if __name__ == '__main__':
         pictures_location = "dataset\pictures"
         data_outcome_folder = "dataset\processed_data"
         runPhotoProcessing(pictures_location, data_outcome_folder)
+        train_models()
 

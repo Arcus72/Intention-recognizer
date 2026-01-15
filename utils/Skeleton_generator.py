@@ -44,7 +44,7 @@ class Skeleton_generator():
         df = self.normalize(df, "z_px", "z")
 
 
-        important_points = [8, 7, 20,  16, 14, 12, 11, 13, 15, 19, 24, 23, 26, 25, 26, 28, 32 ,27, 31]
+        important_points = [8, 7, 20, 16, 14, 12, 11, 13, 15, 19, 24, 23, 26, 25, 26, 28, 32 ,27, 31]
         df = df.iloc[important_points]
 
         # Draws skeleton

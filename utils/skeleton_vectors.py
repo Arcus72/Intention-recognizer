@@ -15,6 +15,8 @@ def skeleton_to_feature_vector(df_skeleton):
     if df_skeleton is None:
         return None
 
+    df_skeleton = df_skeleton.set_index("id")
+    
     hip_center_x = (df_skeleton.loc[23, "x"] + df_skeleton.loc[24, "x"]) / 2
     hip_center_y = (df_skeleton.loc[23, "y"] + df_skeleton.loc[24, "y"]) / 2
 
