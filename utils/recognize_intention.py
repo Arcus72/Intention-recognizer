@@ -1,8 +1,5 @@
-from utils.skeleton_vectors import skeleton_to_feature_vector
-from utils.Skeleton_generator import Skeleton_generator
 from utils.models.model_io import load_model
 from collections import deque
-import pandas as pd
 import numpy as np
 import joblib
 
@@ -20,8 +17,6 @@ def recognize_intention(df_skeleton):
     feature_cols = ["x", "y", "z", "visibility"]
     df = df_skeleton[feature_cols]
     df = df.to_numpy().flatten()
-
-    #df = skeleton_to_feature_vector(df_skeleton)
 
     features = scaler.transform(df.reshape(1, -1))
 

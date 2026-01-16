@@ -2,7 +2,6 @@ import cv2
 import time
 from utils.skeleton_vectors import skeleton_to_feature_vector
 
-
 class VideoPoseStream:
     def __init__(self, generate_skeleton, categorize_skeleton):
         self.generate_skeleton = generate_skeleton
@@ -61,8 +60,6 @@ class VideoPoseStream:
 
             frame = self.add_fps_text(frame)
             df_skeleton = self.generate_skeleton(frame)
-            # features = skeleton_to_feature_vector(df_skeleton)
-            # print("Features:", features)
             category = self.categorize_skeleton(df_skeleton)
 
             cv2.putText(

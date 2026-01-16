@@ -4,7 +4,6 @@ from utils.models.random_forest import create_model as rf_model
 from utils.models.neural_network import create_model as nn_model
 from utils.models.knn_algorithm import create_model as knn_model
 from utils.models.model_io import save_model
-from utils.skeleton_vectors import skeleton_to_feature_vector
 from pathlib import Path
 import pandas as pd
 import joblib
