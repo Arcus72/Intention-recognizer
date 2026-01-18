@@ -3,11 +3,11 @@ import time
 from utils.skeleton_vectors import skeleton_to_feature_vector
 
 class VideoPoseStream:
-    def __init__(self, generate_skeleton, categorize_skeleton):
+    def __init__(self, generate_skeleton, categorize_skeleton,camera_id=0):
         self.generate_skeleton = generate_skeleton
         self.categorize_skeleton = categorize_skeleton
 
-        self.cap = cv2.VideoCapture(0)
+        self.cap = cv2.VideoCapture(camera_id)
 
         self.fps = 0
         self.frame_count = 0
