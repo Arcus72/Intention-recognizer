@@ -81,7 +81,7 @@ class SilhouetteApp:
 
         print(f"Wybrano: {camera_name} (ID: {camera_id})")
 
-        skeleton_gen = Skeleton_generator(False )
+        skeleton_gen = Skeleton_generator(5 )
         stream = VideoPoseStream(skeleton_gen.generate, recognize_intention,camera_id)
         stream.activate( )
 
@@ -109,7 +109,7 @@ class SilhouetteApp:
 
     def learning_handler(self):
         messagebox.showinfo("info", "Przetwarzanie zdjęć...")
-        Skeleton_generator(True).process_photos(r"dataset\pictures", r"dataset\processed_data")
+        Skeleton_generator(1).process_photos(r"dataset\pictures", r"dataset\processed_data")
         messagebox.showinfo("info", "Uczenie maszyny...")
         train_models()
 
