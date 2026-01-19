@@ -21,13 +21,9 @@ class SilhouetteApp:
         self.root.geometry("800x600")
         self.root.resizable(False, False)
 
+        # Dodanie ikonki w oknie
         icon = tk.PhotoImage(file='assets/icon.png')
         self.root.iconphoto(True, icon)
-
-        '''img = Image.open("assets/icon.png")
-        img_resized = img.resize((64, 64), Image.Resampling.LANCZOS)
-        icon = ImageTk.PhotoImage(img_resized)
-        self.root.iconphoto(True, icon)'''
 
         self.cameras_details = self._get_detailed_camera_list()
 
@@ -62,10 +58,11 @@ class SilhouetteApp:
         self.root.columnconfigure((0, 2), weight=1)
         for i in range(8):
             self.root.rowconfigure(i, weight=1 if 0 < i < 7 else 5)
-        self.root.rowconfigure(1, weight=2)
+        self.root.rowconfigure(1, weight=2) # pole z napisem "Intention recognizer program"
 
     def _create_widgets(self):
-        row = 2
+        row = 2 # określa pozycję przycisku "uruchom", reszta analogicznie
+
         # Przycisk Uruchom
         tk.Button(self.root, text="Uruchom", command=self.start_handler).grid(row=row, column=1, sticky="NSEW",
                                                                               pady=(0, 5))
