@@ -17,9 +17,17 @@ from utils.train_models import train_models
 class SilhouetteApp:
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title("Program do sylwetek")
+        self.root.title("Intention recognizer program")
         self.root.geometry("800x600")
         self.root.resizable(False, False)
+
+        icon = tk.PhotoImage(file='assets/icon.png')
+        self.root.iconphoto(True, icon)
+
+        '''img = Image.open("assets/icon.png")
+        img_resized = img.resize((64, 64), Image.Resampling.LANCZOS)
+        icon = ImageTk.PhotoImage(img_resized)
+        self.root.iconphoto(True, icon)'''
 
         self.cameras_details = self._get_detailed_camera_list()
 
@@ -44,7 +52,7 @@ class SilhouetteApp:
 
     def _setup_layout(self):
         try:
-            img = Image.open("assets/background.png").resize((800, 600), Image.LANCZOS)
+            img = Image.open("assets/background_image.png").resize((800, 600), Image.LANCZOS)
             self.bg_photo = ImageTk.PhotoImage(img)
             tk.Label(self.root, image=self.bg_photo).place(x=0, y=0)
         except:
@@ -52,11 +60,12 @@ class SilhouetteApp:
 
         self.root.columnconfigure(1, weight=2)
         self.root.columnconfigure((0, 2), weight=1)
-        for i in range(7):
-            self.root.rowconfigure(i, weight=1 if 0 < i < 6 else 5)
+        for i in range(8):
+            self.root.rowconfigure(i, weight=1 if 0 < i < 7 else 5)
+        self.root.rowconfigure(1, weight=2)
 
     def _create_widgets(self):
-        row = 1
+        row = 2
         # Przycisk Uruchom
         tk.Button(self.root, text="Uruchom", command=self.start_handler).grid(row=row, column=1, sticky="NSEW",
                                                                               pady=(0, 5))
@@ -66,6 +75,11 @@ class SilhouetteApp:
         self.camera_select = ttk.Combobox(self.root, values=names, state="readonly")
         self.camera_select.grid(row=row + 1, column=1, sticky="NSEW", pady=(0, 15))
         if names: self.camera_select.current(0)
+
+        # Tekst Info
+        tk.Label(self.root, fg="black", bg="#bfbfbf", font=("Arial", 13, "bold"),
+                 text="Intention recognizer program"
+                 ).grid(row=row-1, column=1, sticky="NSEW", pady=(0, 10))
 
         # Pozostałe przyciski
         tk.Button(self.root, text="Statystyka", command=self.statistic_handler).grid(row=row + 2, column=1,
