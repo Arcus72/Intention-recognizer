@@ -1,6 +1,7 @@
 import cv2
 import pandas as pd
 import mediapipe as mp
+import numpy as np
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 import os
@@ -86,21 +87,18 @@ class Skeleton_generator():
 
             df = pd.DataFrame(data, columns=["id", "x_px", "y_px", "z_px", "visibility"])
 
-            min_x, min_y, min_z = df["x_px"].min(), df["y_px"].min(), df["z_px"].min()
-            # TODO: Different way of reducint x, y, z
-            df_copy = df.copy()
-            # df_copy["x_px"] -= min_x
-            # df_copy["y_px"] -= min_y
-            # df_copy["z_px"] -= min_z
+            center_x = (df.iloc[12]["x_px"] + df.iloc[11]["x_px"]) / 2
+            center_y = (df.iloc[12]["y_px"] + df.iloc[11]["y_px"]) / 2
 
-            df_copy = self.normalize( df_copy, "x_px", "x")
-            df_copy = self.normalize( df_copy, "y_px", "y")
-            df_copy = self.normalize( df_copy, "z_px", "z")
+            shoulder_width = np.sqrt((df.iloc[12]["x_px"] - df.iloc[11]["x_px"]) ** 2 +
+                                     (df.iloc[12]["y_px"] - df.iloc[11]["y_px"]) ** 2)
 
-            df = df_copy.copy()
+            df["x"] = (df["x_px"] - center_x) / shoulder_width
+            df["y"] = (df["y_px"] - center_y) / shoulder_width
+            df["z"] = df["z_px"] / shoulder_width
 
-            important_points = [0, 8, 7, 20, 16, 14, 12, 11, 13, 15, 19, 24, 23, 26, 25, 28, 32, 27, 31]
-            df = df[df['id'].isin(important_points)].copy()
+            important_points = [8, 7, 20, 16, 14, 12, 11, 13, 15, 19, 24, 23, 26, 25, 26, 28, 32, 27, 31]
+            df = df.iloc[important_points]
 
             list_of_skeletons_df.append(df)
 
