@@ -1,8 +1,11 @@
 import os
 import tkinter as tk
-from tkinter import messagebox, ttk
+from tkinter import messagebox, ttk, filedialog
 from collections import Counter
 import cv2
+import subprocess
+import sys
+import shutil
 from PIL import Image, ImageTk
 from pygrabber.dshow_graph import FilterGraph
 from matplotlib import pyplot as plt
@@ -12,7 +15,6 @@ from utils.VideoPoseStream import VideoPoseStream
 from utils.Skeleton_generator import Skeleton_generator
 from utils.recognize_intention import recognize_intention
 from utils.train_models import train_models
-
 
 class SilhouetteApp:
     def __init__(self):
@@ -54,10 +56,10 @@ class SilhouetteApp:
         except:
             print("Nie znaleziono pliku tła.")
 
-        self.root.columnconfigure(1, weight=2)
+        self.root.columnconfigure(1, weight=1)
         self.root.columnconfigure((0, 2), weight=1)
-        for i in range(8):
-            self.root.rowconfigure(i, weight=1 if 0 < i < 7 else 5)
+        for i in range(9):
+            self.root.rowconfigure(i, weight=1)
         self.root.rowconfigure(1, weight=2) # pole z napisem "Intention recognizer program"
 
     def _create_widgets(self):
@@ -83,7 +85,19 @@ class SilhouetteApp:
                                                                                      sticky="NSEW", pady=(0, 10))
         tk.Button(self.root, text="Uczenie", command=self.learning_handler).grid(row=row + 3, column=1, sticky="NSEW",
                                                                                  pady=(0, 10))
-        tk.Button(self.root, text="Wyjdź", command=self.exit_handler).grid(row=row + 4, column=1, sticky="NSEW",
+        tk.Button(
+            self.root,
+            text="Dodaj zdjęcia",
+            command=self.add_pictures_handler
+        ).grid(row=row + 4, column=1, sticky="NSEW", pady=(0, 10))
+
+        tk.Button(
+            self.root,
+            text="Otwórz folder save",
+            command=self.open_save_folder_handler
+        ).grid(row=row + 5, column=1, sticky="NSEW", pady=(0, 10))
+
+        tk.Button(self.root, text="Wyjdź", command=self.exit_handler).grid(row=row + 6, column=1, sticky="NSEW",
                                                                            pady=(0, 10))
 
     def start_handler(self):
@@ -92,9 +106,14 @@ class SilhouetteApp:
 
         print(f"Wybrano: {camera_name} (ID: {camera_id})")
 
-        skeleton_gen = Skeleton_generator(5 )
-        stream = VideoPoseStream(skeleton_gen.generate, recognize_intention,camera_id)
-        stream.activate( )
+        self.root.withdraw()
+
+        skeleton_gen = Skeleton_generator(5)
+        stream = VideoPoseStream(skeleton_gen.generate, recognize_intention, camera_id)
+
+        stream.activate()
+
+        self.root.deiconify()
 
     def statistic_handler(self):
         for widget in self.root.winfo_children():
@@ -124,6 +143,41 @@ class SilhouetteApp:
         messagebox.showinfo("info", "Uczenie maszyny...")
         train_models()
 
+    def open_folder(self, path):
+        if not os.path.exists(path):
+            os.makedirs(path)
+
+        if sys.platform == "win32":
+            os.startfile(os.path.abspath(path))
+        elif sys.platform == "darwin":
+            subprocess.Popen(["open", path])
+        else:
+            subprocess.Popen(["xdg-open", path])
+
+    def add_pictures_handler(self):
+        files = filedialog.askopenfilenames(
+            title="Wybierz zdjęcia do dodania",
+            filetypes=[("Obrazy", "*.jpg *.jpeg *.png")]
+        )
+
+        if not files:
+            return
+
+        save_folder = "save"
+        if not os.path.exists(save_folder):
+            os.makedirs(save_folder)
+
+        for file_path in files:
+            try:
+                shutil.copy(file_path, save_folder)
+            except Exception as e:
+                messagebox.showerror("Błąd", f"Nie udało się skopiować pliku {file_path}.\n{e}")
+
+        messagebox.showinfo("Info", f"Dodano {len(files)} zdjęć do folderu '{save_folder}'")
+
+    def open_save_folder_handler(self):
+        self.open_folder("save")
+
     def exit_handler(self):
         self.root.destroy()
 
@@ -134,3 +188,6 @@ class SilhouetteApp:
 if __name__ == "__main__":
     app = SilhouetteApp()
     app.activate()
+
+# TODO: build
+# TODO: Test wykrywania wielu naraz

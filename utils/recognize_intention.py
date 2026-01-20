@@ -3,7 +3,7 @@ from collections import deque
 import numpy as np
 import joblib
 
-_PROB_BUFFER = deque(maxlen=10)
+_PROB_BUFFER = deque(maxlen=15)
 _model = load_model("random_forest")
 
 scaler = joblib.load("trained_models/scaler.joblib")
@@ -21,9 +21,10 @@ def recognize_intention(df_skeleton):
     features = scaler.transform(df.reshape(1, -1))
 
     probs = _model.predict_proba(features)[0]
+    print(probs)
     _PROB_BUFFER.append(probs)
 
-    if len(_PROB_BUFFER) < 10:
+    if len(_PROB_BUFFER) < 15:
         return "Analizing..."
 
     avg_probs = np.mean(_PROB_BUFFER, axis=0)

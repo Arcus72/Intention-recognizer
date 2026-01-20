@@ -115,14 +115,14 @@ class VideoPoseStream:
     def activate(self):
         if not self.cap:
             return
-
+        # test_image = cv2.imread('./test.jpg')
         while True:
             ret, frame = self.cap.read()
 
             if not ret:
                 print("Błąd: Nie można odczytać klatki.")
                 continue
-
+            # frame = test_image.copy()
             original_frame = frame.copy()
             frame = self.add_fps_text(frame)
             df_skeletons = self.generate_skeleton(frame)
@@ -136,7 +136,7 @@ class VideoPoseStream:
 
             dangerous_level = self.get_dangerous_level(frame_intentions)
 
-            if dangerous_level == 0 and self.frame_count == 0:
+            if dangerous_level == 100 and self.frame_count == 0:
                 self.save_image(original_frame)
                 pass
 
@@ -151,7 +151,7 @@ class VideoPoseStream:
                 cv2.LINE_AA
             )
 
-            cv2.imshow('Kamerka OpenCV z FPS (q -> exit)', frame)
+            cv2.imshow('Press q to exit', frame)
 
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break

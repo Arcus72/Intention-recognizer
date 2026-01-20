@@ -1,8 +1,6 @@
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.model_selection import train_test_split
 from utils.models.random_forest import create_model as rf_model
-from utils.models.neural_network import create_model as nn_model
-from utils.models.knn_algorithm import create_model as knn_model
 from utils.models.model_io import save_model
 from pathlib import Path
 import pandas as pd
@@ -89,11 +87,14 @@ def train_models():
     X = []
     y = []
 
+
+
     BASE_DIR = Path(__file__).resolve().parent.parent
     DATA_DIR = BASE_DIR / "dataset" / "processed_data"
 
     for file in DATA_DIR.glob("*.csv"):
         df = csv_to_features(file)
+
 
         X.append(df.to_numpy().flatten())
         y.append(label_from_filename(file.name))
@@ -113,16 +114,11 @@ def train_models():
     X_scaled = scaler.fit_transform(X)
 
     rf = rf_model()
-    nn = nn_model()
-    knn = knn_model()
 
     rf.fit(X_scaled, y_enc)
-    nn.fit(X_scaled, y_enc)
-    knn.fit(X_scaled, y_enc)
 
     save_model(rf, "random_forest")
-    save_model(nn, "neural_network")
-    save_model(knn, "knn")
+
 
     joblib.dump(scaler, "trained_models/scaler.joblib")
     joblib.dump(le, "trained_models/label_encoder.joblib")

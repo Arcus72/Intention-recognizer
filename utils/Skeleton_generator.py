@@ -13,15 +13,16 @@ class Skeleton_generator():
 
         base_options = python.BaseOptions(model_asset_path=model_path)
 
-        mode = vision.RunningMode.VIDEO
 
         options = vision.PoseLandmarkerOptions(
             base_options=base_options,
-            running_mode= mode,
-            num_poses=max_num_poses,
-            min_pose_detection_confidence=0.8
+            running_mode=vision.RunningMode.VIDEO,
+            num_poses=5,
+            min_pose_detection_confidence=0.5,
+            min_tracking_confidence=0.5  # Ważne w trybie wideo
         )
         self.detector = vision.PoseLandmarker.create_from_options(options)
+        self.start_time = time.time()
 
 
 
@@ -67,7 +68,7 @@ class Skeleton_generator():
         image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=image_rgb)
 
-        timestamp_ms = int(time.time() * 1000)
+        timestamp_ms = int((time.time() - self.start_time) * 1000)
         detection_result = self.detector.detect_for_video(mp_image, timestamp_ms)
 
         if not detection_result.pose_landmarks:
