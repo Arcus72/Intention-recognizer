@@ -3,17 +3,20 @@ from collections import deque
 import numpy as np
 import joblib
 
-_PROB_BUFFER = deque(maxlen=15)
+_PROB_BUFFER_DICT = [deque(maxlen=10),deque(maxlen=10),deque(maxlen=10),deque(maxlen=10),deque(maxlen=10)]
 _model = load_model("random_forest")
 
 scaler = joblib.load("trained_models/scaler.joblib")
 label_encoder = joblib.load("trained_models/label_encoder.joblib")
 
 def recognize_intention(df_skeleton):
+
     if df_skeleton is None:
         return "no_person"
 
-    # Jeśli korzystamy z wektorów to te trzy linijki zakomentować, a skeleton_to_feature odkomentować
+    person_id = df_skeleton['person_id'].values[0]
+    print("Person ID: ", person_id)
+
     feature_cols = ["x", "y", "z", "visibility"]
     df = df_skeleton[feature_cols]
     df = df.to_numpy().flatten()
@@ -21,13 +24,12 @@ def recognize_intention(df_skeleton):
     features = scaler.transform(df.reshape(1, -1))
 
     probs = _model.predict_proba(features)[0]
-    print(probs)
-    _PROB_BUFFER.append(probs)
+    _PROB_BUFFER_DICT[person_id].append(probs)
 
-    if len(_PROB_BUFFER) < 15:
+    if len(_PROB_BUFFER_DICT[person_id]) < 10:
         return "Analizing..."
 
-    avg_probs = np.mean(_PROB_BUFFER, axis=0)
+    avg_probs = np.mean(_PROB_BUFFER_DICT[person_id], axis=0)
 
     best_idx = np.argmax(avg_probs)
     best_prob = avg_probs[best_idx]

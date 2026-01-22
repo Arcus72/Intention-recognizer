@@ -111,26 +111,27 @@ class VideoPoseStream:
         file_path = f"save/alert_{timestamp_str}.jpg"
         cv2.imwrite(file_path, img)
 
-
     def activate(self):
         if not self.cap:
             return
-        # test_image = cv2.imread('./test.jpg')
         while True:
             ret, frame = self.cap.read()
 
             if not ret:
                 print("Błąd: Nie można odczytać klatki.")
                 continue
-            # frame = test_image.copy()
             original_frame = frame.copy()
             frame = self.add_fps_text(frame)
             df_skeletons = self.generate_skeleton(frame)
             frame_intentions = []
-
+            print("-----------------------------------")
             for df_skeleton in df_skeletons:
+
                 if df_skeleton is not None:
                     category = self.categorize_skeleton(df_skeleton)
+                    print(category)
+                    print(df_skeleton)
+
                     frame_intentions.append(category)
                     self.draw_posture(frame, df_skeleton, category)
 

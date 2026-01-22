@@ -10,7 +10,7 @@ import time
 
 class Skeleton_generator():
     def __init__(self, max_num_poses = 5):
-        model_path = 'assets/pose_landmarker_heavy.task'
+        model_path = 'assets/pose_landmarker_full.task'
 
         base_options = python.BaseOptions(model_asset_path=model_path)
 
@@ -79,13 +79,13 @@ class Skeleton_generator():
         h, w, _ = image.shape
         list_of_skeletons_df = []
 
-        for pose_landmarks in detection_result.pose_landmarks:
+        for person_idx, pose_landmarks in enumerate(detection_result.pose_landmarks):
             data = []
-            for id, lm in enumerate(pose_landmarks):
+            for id_landmark, lm in enumerate(pose_landmarks):
                 x_px, y_px, z_px = int(lm.x * w), int(lm.y * h), int(lm.z * w)
-                data.append([id, x_px, y_px, z_px, lm.visibility])
+                data.append([person_idx, id_landmark, x_px, y_px, z_px, lm.visibility])
 
-            df = pd.DataFrame(data, columns=["id", "x_px", "y_px", "z_px", "visibility"])
+            df = pd.DataFrame(data, columns=["person_id", "id", "x_px", "y_px", "z_px", "visibility"])
 
             center_x = (df.iloc[12]["x_px"] + df.iloc[11]["x_px"]) / 2
             center_y = (df.iloc[12]["y_px"] + df.iloc[11]["y_px"]) / 2
@@ -100,6 +100,6 @@ class Skeleton_generator():
             important_points = [8, 7, 20, 16, 14, 12, 11, 13, 15, 19, 24, 23, 26, 25, 26, 28, 32, 27, 31]
             df = df.iloc[important_points]
 
-            list_of_skeletons_df.append(df)
+            list_of_skeletons_df.append(df.copy() )
 
         return list_of_skeletons_df
