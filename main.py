@@ -11,7 +11,7 @@ from pygrabber.dshow_graph import FilterGraph
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-from utils.VideoPoseStream import VideoPoseStream
+from utils.VideoPoseStream import VideoPoseStreamq
 from utils.Skeleton_generator import Skeleton_generator
 from utils.recognize_intention import recognize_intention
 from utils.train_models import train_models
@@ -142,6 +142,7 @@ class SilhouetteApp:
         Skeleton_generator(1).process_photos(r"dataset\pictures", r"dataset\processed_data")
         messagebox.showinfo("info", "Uczenie maszyny...")
         train_models()
+        messagebox.showinfo("info", "Program jest gotowy do uruchomienia.")
 
     def open_folder(self, path):
         if not os.path.exists(path):
